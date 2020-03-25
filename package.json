@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "Assemble smarter. Develop faster.",
   "main": "entry/entry.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/andrey-brill/a-bundle"
+  },
+  "author": "Andrey Brill <andrey@a-brill.com> (https://github.com/andrey-brill)",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrey-brill/a-bundle/issues"
+  },
+  "homepage": "https://github.com/andrey-brill/a-bundle",
   "keywords": [
     "library",
     "bundle",
