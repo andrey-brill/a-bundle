@@ -23,7 +23,6 @@ ABundle - a middleware object for sharing resources to make possible
 
     // only imports of 'a-bundle' and 'chunk-name' is allowed
     // exports of modules from chunk = ABundle.get(CHUNK_NAME)
-    // to support intellisense use /** @type {Type} */ annotation
     // all code must import externals modules only from here
     chunk-e.js
 
@@ -38,7 +37,7 @@ ABundle - a middleware object for sharing resources to make possible
 /entry // allows uniquely assemble module into another module webpack
 
     // `import modules from 'modules.js'`
-    // initialization of ABundle.get(CHUNK_NAME)
+    // initialization and ABundle.put(CHUNK_NAME, chunk)
     // export default chunk
     chunk-i.js
 
