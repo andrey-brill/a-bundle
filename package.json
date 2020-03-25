@@ -1,0 +1,17 @@
+{
+  "name": "a-bundle",
+  "version": "1.0.0",
+  "description": "Assemble smarter. Develop faster.",
+  "main": "entry/entry.js",
+  "license": "MIT",
+  "keywords": [
+    "library",
+    "bundle",
+    "module",
+    "assembling",
+    "chunk",
+    "entry"
+  ],
+  "devDependencies": {},
+  "dependencies": {}
+}

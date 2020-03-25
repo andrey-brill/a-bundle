@@ -1,0 +1,5 @@
+.vscode
+.vs
+.github
+.gitignore
+node_modules
