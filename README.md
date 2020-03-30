@@ -84,17 +84,27 @@ ABundle - a middleware object for sharing resources to make possible
 ```
 
 
-### Warning
+### Connecting different versions of same module
 
-Minus is that commonly used module (connected in that way) will have same version for all other modules
+#### Example:
 
-But if you need to override some module for some libs you can create own entry.js like:
+  - 'my-module' is using react v17
+  - 'external-module' is using react v15 (and incompatible with react v17)
+
+#### Solution 1:
+
+  - go to `my-module/node_modules/external-module`
+  - `run npm i react@15`
+  - so react v15 must be installed into `my-module/node_modules/external-module/node_modules`
+  - now, during `external-module` compilation __webpack__ should take react from closest to the module `node_modules` folder
+
+#### Solution 2 (not recommended):
 
 ```
 // react-module-legacy-entry.js
 
 import React from '../react-v13/'
-import Chunk from '../react-module/entry/chunk-i.js'
+import { Chunk } from '../react-module/entry/chunk-i.js'
 
 Chunk.replace('react', React);
 
