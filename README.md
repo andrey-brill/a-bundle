@@ -31,14 +31,14 @@ ABundle - a middleware object for sharing resources to make possible
 
     // imports of external modules e.g. `import React from 'react'; ... `
     // packing into modules object `{ react: React }`
-    // export default MODULES
+    // export { MODULES }
     modules.js
 
 /entry // allows uniquely assemble module into another module webpack
 
     // `import modules from 'modules.js'`
     // initialization and ABundle.put(CHUNK_NAME, chunk)
-    // export default chunk
+    // export { AChunk }
     chunk-i.js
 
     // "source": "entry/entry.js" (in package.json)
