@@ -1,52 +1,121 @@
 
+# ABundle
+
+__Assemble smarter. Develop faster.__
+
 ### Reasons
 
-1. Make most common way to developing anything on JavaScript in modular way
-2. Use power of webpack with default configuration
+- Make most common way to developing anything on JavaScript in modular way
+- Make connecting between modules clear and transparent
+- Use power of webpack with the simplest configuration
+- Less custom features as possible to prevent painful support
 
 ### Solution
 
 ABundle - a middleware object for sharing resources to make possible
 
-  - import modules in different ways for make development faster
-  - better connect and assembling modules
+- import modules in different ways for make development faster
+- better connect and assembling modules
 
-### Structure of module
+### Common structure of module
 
 ```
 
+package.json
+
+    "name": "my-module",
+    "source": "entry/entry.js"
+    ...
+
+
+// contains source code of module
 /src
 
-    // export of CHUNK_NAME from chunk-name.js
-    // CHUNK_NAME should be same as "name" (in package.json)
+
     chunk-name.js
 
-    // only imports of 'a-bundle' and 'chunk-name' is allowed
-    // exports of modules from chunk = ABundle.get(CHUNK_NAME)
+        // should be the same as module name (in package.json)
+        const CHUNK_NAME = 'my-module';
+
+        export { CHUNK_NAME };
+
+
     // all code must import externals modules only from here
     chunk-e.js
+
+        // only imports of 'a-bundle' and 'chunk-name' is allowed
+        import { CHUNK_NAME } from './chunk-name.js';
+        import { ABundle } from 'a-bundle';
+
+        const chunk = ABundle.get(CHUNK_NAME);
+
+        // highly recommend to convert kebab-case to pascal-case as is
+        const OtherModule = chunk.get('other-module');
+        const AnAnotherModule = chunk.get('an-another-module');
+
+        // exports of external modules
+        export { OtherModule, AnAnotherModule };
+
 
     // export of module functionality
     index.js
 
-    // imports of external modules e.g. `import React from 'react'; ... `
-    // packing into modules object `{ react: React }`
-    // export { MODULES }
+        // do not use default
+        export * from './core/Core.js';
+        ...
+        export * from './helpers/StaticCore.js';
+
+
+    // imports of external modules
     modules.js
 
-/entry // allows uniquely assemble module into another module webpack
+        import OtherModule from 'other-module';
+        import * as AnAnotherModule from 'an-another-module';
 
-    // `import modules from 'modules.js'`
-    // initialization and ABundle.put(CHUNK_NAME, chunk)
-    // export { AChunk }
+        const MODULES = {
+            'other-module': OtherModule,
+            'an-another-module': AnAnotherModule
+        }
+
+        export { MODULES };
+
+
+// allows assemble module into another modules via webpack
+/entry
+
+    // initialization of AChunk
     chunk-i.js
 
-    // "source": "entry/entry.js" (in package.json)
-    // import 'chunk-i.js'
-    // export * from 'index.js'
+        import { ABundle, Chunk } from 'a-bundle';
+        import { CHUNK_NAME } from '../src/chunk-name.js';
+        import { MODULES } from '../src/modules.js';
+
+        const AChunk = new Chunk();
+        AChunk.putAll(MODULES);
+
+        ABundle.put(CHUNK_NAME, AChunk);
+
+        export { AChunk };
+
+
+    // exporting module in webpack module way
     entry.js
 
-/dev // fast development without recompiling external modules
+        import './chunk-i.js';
+        export * from '../src/index.js';
+
+
+```
+
+### EDD (example-driven development) with ABundle
+
+- fast development based on EDD
+- external modules will be compiled __once__ into a global bundle
+
+```
+
+/examples
+
 
     /src
         // initialization of ABundle.get(CHUNK_NAME) from global variables (e.g. `window.modules`)
@@ -55,31 +124,38 @@ ABundle - a middleware object for sharing resources to make possible
         // import 'chunk-i.js'
         // import { .. } from 'index.js'
         // some functionality to test and develop library
-        dev.js
+        examples.js
+        examples.scss
 
-        // dev builder to /app/build/_dev.js
+        // in development to /spa/build/examples.js
+        // in production to /docs/dist/examples.[hash].js
         webpack.config.js
 
 
-    /global // build all external code into global variable for development purposes
+    // build all external modules into UMD library for development purposes
+    /modules
 
         // contains prebuilt globally assigned modules
-        // `import modules from 'modules.js'`
-        // `window.modules = modules`
-        global.js
+        // `import { MODULES } from 'modules.js'`
+        // export default MODULES;
+        modules.js
 
-        // bundle builder to /app/build/_global.js
+        // bundle builder in development to /spa/build/modules.js
+        // bundle builder in production to /docs/dist/modules.[hash].js
         webpack.config.js
 
-    /app
 
-        /build //folder with built resources
+    // content of SPA
+    /spa
 
-        // `<script src="build/_global.js"/>`
-        // `<script src="build/_dev.js"/>`
-        index.html
-        index.css
+        // folders with built resources and assets
+        /build
+        /assets
+        favicon.ico
 
+
+// production build of examples for Github pages
+/docs
 
 ```
 
@@ -88,17 +164,17 @@ ABundle - a middleware object for sharing resources to make possible
 
 #### Example:
 
-  - 'my-module' is using react v17
-  - 'external-module' is using react v15 (and incompatible with react v17)
+- 'my-module' is using react v17
+- 'external-module' is using react v15 (and incompatible with react v17)
 
-#### Solution 1:
+#### Solution 1 (NOT TESTED):
 
-  - go to `my-module/node_modules/external-module`
-  - `run npm i react@15`
-  - so react v15 must be installed into `my-module/node_modules/external-module/node_modules`
-  - now, during `external-module` compilation __webpack__ should take react from closest to the module `node_modules` folder
+- go to `my-module/node_modules/external-module`
+- `run npm i react@15`
+- so react v15 must be installed into `my-module/node_modules/external-module/node_modules`
+- now, during `external-module` compilation __webpack__ should take react from closest to the module `node_modules` folder
 
-#### Solution 2 (not recommended):
+#### Solution 2:
 
 ```
 // react-module-legacy-entry.js
