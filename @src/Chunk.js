@@ -49,7 +49,7 @@ export class Chunk {
         return this.put(name, module);
     }
 
-    static fromUmd(umd) {
+    static fromUmd (umd) {
 
         if (!umd || !umd.default) {
             throw new Error(`UMD is undefined or doesn't export modules as 'default' property.`)
