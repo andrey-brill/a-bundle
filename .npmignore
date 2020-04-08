@@ -1,5 +1,4 @@
-.vscode
-.vs
-.github
+
+.git
 .gitignore
 node_modules

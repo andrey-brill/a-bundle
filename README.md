@@ -28,8 +28,9 @@ package.json
     ...
 
 
-// contains source code of module
-/src
+// contains raw sources of module
+// the sources should be compiled before use
+/@src
 
 
     chunk-name.js

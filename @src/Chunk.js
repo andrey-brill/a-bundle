@@ -2,11 +2,11 @@
 
 export class Chunk {
 
-    // It's possible to pass window object (or global object in node.js) as modules container
-    constructor (modulesContainer) {
-        this.modules = modulesContainer || {};
-    }
+    modules = {}
 
+    constructor (modules = {}) {
+        this.putAll(modules);
+    }
 
     get (name) {
 
@@ -47,5 +47,14 @@ export class Chunk {
     replace (name, module) {
         this.remove(name);
         return this.put(name, module);
+    }
+
+    static fromUmd(umd) {
+
+        if (!umd || !umd.default) {
+            throw new Error(`UMD is undefined or doesn't export modules as 'default' property.`)
+        }
+
+        return new Chunk(umd.default);
     }
 }
