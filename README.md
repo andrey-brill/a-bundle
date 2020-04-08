@@ -117,8 +117,9 @@ package.json
 
 /examples
 
-
-    /src
+    // contains raw sources of examples
+    // the sources should be compiled to use
+    /@src
         // initialization of ABundle.get(CHUNK_NAME) from global variables (e.g. `window.modules`)
         chunk-i.js
 
